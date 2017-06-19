@@ -34,101 +34,83 @@
 */
 
 /*
-    This is a nice solution I wrote. It traverses the input once, is online, and does not require extra space.
+    Heres a solution which traverse the input once, is online, and does not require extra space,
+    which differs from the solutions I searched online afterwards to compare.
 
-    Jonathan Weinstein, May 6, 2016.
+
+    Jonathan Weinstein last updated June 18, 2016.
 */
 
-#include <stdio.h>
+#include <stdint.h>
+#include <iostream>
+using namespace std;
 
-static inline
-unsigned min(unsigned a, unsigned b)
+typedef uint_least64_t total_t;
+
+inline
+total_t asum(unsigned n)//sum of numbers in [1,n] inclusive
+{
+    return (n*total_t(n+1))>>1;
+}
+
+inline
+unsigned umin(unsigned a, unsigned b)
 {
     return a<b ? a : b;
 }
 
-static inline
-unsigned long sum(unsigned long n)//sum of numbers [1,n]
+total_t solve(int n)
 {
-    return (n*(n+1u))>>1u;
+    total_t total=1;
+    unsigned fall=1u, rise=1u, prev=~0u, next;
+
+    if (n-- <= 1)
+        return 1;
+
+    cin>>next;//get first kid so have something to compare
+
+    do
+    {
+        for(fall=1;;)
+        {
+            prev=next, cin>>next, --n;
+            if (prev<=next)
+                break;
+            ++fall;
+            if (n==0)
+                goto LEndOnFall;
+        }
+
+        if (fall>1)//if we went down at all
+        {
+            //here rise refers to the previous run
+            total += asum(fall) - umin(fall, rise);//dont include overlap twice. 1,2,9,8,5,1: sub 3
+            rise=1;                                //rise of 3 overlaps fall of 4
+        }
+        //tack on 1 or more candies due to kid on right
+        if (next==prev)
+        {
+            ++total;
+            rise=1;
+        }
+        else//going up
+            total += ++rise;//the current run
+    }while(n);
+
+    return total;
+LEndOnFall:
+    return total + asum(fall) - umin(fall, rise);//depending on how coded may have to inc fall
 }
 
-//((n+1u)>>1u)*(n|1u);
-
-void candies()
+int main()
 {
     int n=0;
-    scanf("%d", &n);
-
+    cin>>n;
     if (n>1)
     {
-        unsigned long total=1uL;
-        unsigned fall=1u, rise=1u, prev, next;
-        scanf("%u", &next);
-        --n;
-
-        /************************************************/
-        for ( ; ; fall=1u)
-        {
-            for ( ; ; ++fall)//see if we are descending and for how long
-            {
-                prev=next;
-                scanf("%u", &next);
-                if ( (--n==0) | (next>=prev) )//may not get last increment checking both at same time like this, fixed outside
-                    break;
-            }
-
-            if (n==0)
-                break;
-
-            if (fall!=1u)//if we went down at all
-            {
-                total += sum(fall) - min(fall, rise);
-                rise=1u;
-            }
-            //tack on 1 or more candies due to kid on right
-            if (next==prev)
-            {
-                ++total;
-                rise=1u;
-            }
-            else//going up
-                total += ++rise;
-        }
-        /************************************************/
-        if (prev>next)
-            total += sum(fall+1u) - min(fall+1u, rise);
-        else
-        {
-            total += sum(fall) - min(fall, rise);
-            if (next==prev) ++total;
-            else if (fall!=1u) total+=2u;
-            else total+=rise+1u;
-        }
-
-        printf("%lu\n", total);
+        cout<<solve(n)<<'\n';
+        return 0;
     }
     else
-        puts(n==1 ? "1" : "0");
-}
-
-int main(int argc, char* argv[])
-{
-    if (argc==2)
-    {
-        if (freopen(argv[1], "r", stdin))
-        {
-            candies();
-            fclose(stdin);
-            return 0;
-        }
-        else
-        {
-            perror("freopen");
-            return 1;
-        }
-    }
-
-    candies();
-    return 0;
+        return 1;
 }
