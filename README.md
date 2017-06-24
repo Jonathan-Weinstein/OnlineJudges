@@ -2,7 +2,7 @@
 My solutions to challenges from various online judges, mainly HackerRank.
 ## Sample
 **HackerRank: Super Reduced String**  
-Given a string, repeatedly remove pairs of adjacent matching elements and print the reduced result.
+Given a string, repeatedly remove pairs of adjacent matching elements and print the reduced result.   
 Examples:  
 `abc` :arrow_right: `abc`  
 `abbc` :arrow_right: `ac`  
