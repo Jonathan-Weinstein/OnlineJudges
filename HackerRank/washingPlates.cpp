@@ -1,7 +1,8 @@
 /*
     Washing Plates
-    https://www.hackerrank.com/contests/101hack41/challenges/washing-dishs
-    solution by Jonathan Weinstein 9/21/16
+    https://www.hackerrank.com/contests/101hack41/challenges/washing-plates/problem
+
+    solution by Jonathan Weinstein, last updated June 22, 2017
 
     Problem:
     There are N dirty dishes, but Bob only has time to wash K of them.
@@ -17,69 +18,53 @@
     First line has N followed by K.
     The following N lines hold P and D for a dish.
 */
-#include <stdio.h>
-#include <stdint.h>//dealing with big int values here
+#include <cstdint>
+#include <iostream>
 #include <algorithm>//nth_element
+#include <numeric>//accumulate
+using namespace std;
 
-enum{N=200000};//200k
+//max value of any P or D is 10**9, twice this can fit in an i32,
+//but accumlating many needs a wider type
+typedef uint_least32_t ucost_t;
+typedef int_fast64_t iaccum_t;
 
-struct dish
+auto const above=[](ucost_t a, ucost_t b){return a>b;};
+
+int main()
 {
-    unsigned pay, deduct;
-};
+    unsigned n=0u, k=0u;
+    cin>>n>>k;
 
-const auto Cmp=[](dish a, dish b)
-{
-    return (a.pay+a.deduct) > (b.pay+b.deduct);//both values are equally important
-};//lambda
-
-void println(uint64_t u);
-
-int main(int argc, char **argv)
-{
-    if (argc==2 && freopen(argv[1], "r", stdin)==nullptr)
+    if (n>k)
     {
-        perror("freopen()");
-        return 1;
+        ucost_t *const buf=new ucost_t[n];
+        ucost_t *const past=buf+n;
+        iaccum_t net=0;
+
+        for (ucost_t *it=buf; it!=past; ++it)
+        {
+            ucost_t pay, deduct;
+            cin>>pay>>deduct;
+            *it = pay + deduct;
+            net += deduct;//would lose all of this if wash none. minimize storage
+        }
+
+        ucost_t *const kth=buf+k;
+        nth_element(buf, kth, past, above);
+        net = accumulate(buf, kth, -net);//add on p values and undo d values
+        delete[]buf;
+
+        if (net>0)  cout<<net<<'\n';
+        else        cout<<"0\n";
     }
-
-    unsigned n, k;
-    scanf("%u%u", &n, &k);
-
-    if (k>=n)
+    else//can wash everything
     {
-        uint64_t sum=0ul;
-        unsigned pay;
-        while (n--) scanf("%u%*u", &pay), sum+=pay;//ignore deduct value
-        println(sum);
-    }
-    else
-    {
-        static dish Buf[N];
-        dish *const End=Buf+n, *const Kth=Buf+k;//should call this KthEnd
-
-        for (dish *p=Buf; p!=End; ++p)
-            scanf("%u%u", &p->pay, &p->deduct);
-
-        std::nth_element(Buf, Kth, End, Cmp);//only need to semi-sort, since addition order doesn't matter
-
-        uint64_t gain=0ul, lose=0ul;//left, right side sums
-
-        for (const dish *p1=Buf; p1!=Kth; ++p1) gain += p1->pay;//accumulate pay values in [Begin, Kth)
-        for (const dish *p2=Kth; p2!=End; ++p2) lose += p2->deduct;//accumulate deduct values in [Kth, End)
-
-        if (gain>lose)  println(gain-lose);
-        else            puts("0");
+        iaccum_t sum=0;
+        ucost_t pay, deduct;//don't have to process deduct value, just ignore it. Something like scanf("*u");
+        while (n--) cin>>pay>>deduct, sum+=pay;
+        cout<<sum<<'\n';
     }
 
     return 0;
-}
-
-void println(uint64_t u)//hard to do this with printf portably
-{
-    char buf[21];
-    unsigned pos=20u;
-    buf[20u]='\n';
-    do buf[--pos]=(u%10u)+'0'; while (u/=10u);
-    fwrite(buf+pos, 1u, 21-pos, stdout);
 }
