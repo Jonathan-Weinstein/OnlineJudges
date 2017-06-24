@@ -1,6 +1,7 @@
 # OnlineJudges
 My solutions to challenges from various online judges, mainly HackerRank.
 ## Sample
+**HackerRank: Super Reduced String**  
 Given a string, repeatedly remove pairs of adjacent matching elements and print the reduced result.
 Examples:  
 `abc` :arrow_right: `abc`  
@@ -37,7 +38,7 @@ int super_reduce(char *a, int n)
 Text.
 ### [Candies](./HackerRank/candies.cpp)
 Text.
-### [Lisa's WorkBook](./HackerRank/LisasWorkbook.cpp)
+### [Lisa's WorkBook](./HackerRank/lisasWorkbook.cpp)
 Text.
 ### [2's Complement](./HackerRank/2sComplement.c)
 Text.
