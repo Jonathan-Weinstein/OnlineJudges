@@ -35,10 +35,10 @@ int super_reduce(char *a, int n)
 
 ## Highlights
 ### [Washing Plates](./HackerRank/washingPlates.cpp)
-Text.
+Pretty neato and uses `nth_element`.
 ### [Candies](./HackerRank/candies.cpp)
-Text.
+Made an online algorithm that doesn't use extra space, unlike top solutions in search results.
 ### [Lisa's WorkBook](./HackerRank/lisasWorkbook.cpp)
-Text.
+Figured out a pattern to create a linear time solution I haven't seen elsewhere.
 ### [2's Complement](./HackerRank/2sComplement.c)
-Text.
+Was really satisfying to solve and I think I implemented it well.
