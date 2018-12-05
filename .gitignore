@@ -27,4 +27,13 @@
 *.out
 *.app
 
+*.depend
+*.layout
+*.cbp
+
+input/
+ignore/
+bin/
+obj/
 wip/
+scratch
